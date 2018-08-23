@@ -1,4 +1,4 @@
-#
+# Class 8 DBI Example
 # THIS IS AN EXAMPLE APPLICATION IT WILL NOT RUN
 
 library(shiny)
@@ -19,7 +19,7 @@ ui <- fluidPage(
    # Application title
    titlePanel("Database Dashboard"),
    
-   # Sidebar with a slider input for number of bins 
+   # Sidebar 
    sidebarLayout(
       sidebarPanel(
          sdateRangeInput("dates",
@@ -32,17 +32,17 @@ ui <- fluidPage(
                      selected = "Some Type")
       ),
       
-      # Show a plot of the generated distribution
+      # Show plot
       mainPanel(
          plotOutput("examplePlot")
       )
    )
 )
 
-# Define server logic required to draw a histogram
+# Define server logic
 server <- function(input, output) {
    dataLoad <- reactive({
-     # Generate SQL Statement
+     # Generate SQL Statement which handles all filtering
      sql <- paste0("SELECT * FROM SOME_DATABASE WHERE DATE_COLUMN >= '", input$dates[1], "' AND DATE_COLUMN <= '", input$dates[2], "' AND TYPE = ", input$select)
      # Run SQL Statement
      data <- dbGetQuery(conn, sql)
@@ -50,8 +50,10 @@ server <- function(input, output) {
      return(data)
    })
    output$examplePlot <- renderPlot({
+     data <- dataLoad()
+       
      ggplot(table, aes(x = STATUS, y = count, fill = STATUS)) +
-       geom_bar(stat = "identity")
+       geom_bar()
    })
 }
 
