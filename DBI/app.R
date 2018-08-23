@@ -42,8 +42,9 @@ ui <- fluidPage(
 # Define server logic required to draw a histogram
 server <- function(input, output) {
    dataLoad <- reactive({
-     sql <- paste0("SELECT * FROM SOME_DATABASE WHERE DATE_COLUM >= '", input$dates[1], "' AND DATE_COLUM <= '", input$dates[2], "' AND TYPE = ", input$select)
-     
+     # Generate SQL Statement
+     sql <- paste0("SELECT * FROM SOME_DATABASE WHERE DATE_COLUMN >= '", input$dates[1], "' AND DATE_COLUMN <= '", input$dates[2], "' AND TYPE = ", input$select)
+     # Run SQL Statement
      data <- dbGetQuery(conn, sql)
      
      return(data)
