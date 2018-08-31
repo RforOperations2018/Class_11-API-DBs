@@ -7,9 +7,13 @@ library(jsonlite)
 library(plotly)
 
 ckanSQL <- function(url) {
+  # Make the Request
   r <- RETRY("GET", url)
+  # Extract Content
   c <- content(r, "text")
+  # Basic gsub to make NA's consistent with R
   json <- gsub('NaN', 'NA', c, perl = TRUE)
+  # Create Dataframe
   data.frame(jsonlite::fromJSON(json)$result$records)
 }
 
