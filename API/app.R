@@ -8,7 +8,7 @@ library(plotly)
 
 ckanSQL <- function(url) {
   # Make the Request
-  r <- RETRY("GET", url)
+  r <- RETRY("GET", encodeURL(url))
   # Extract Content
   c <- content(r, "text")
   # Basic gsub to make NA's consistent with R
