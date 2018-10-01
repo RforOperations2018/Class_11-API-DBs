@@ -7,6 +7,7 @@ library(dplyr)
 library(tidyr)
 library(rgdal)
 library(leaflet)
+library(shinythemes)
 
 # Function to pull ESRI data
 getEsri <- function(url) {
@@ -25,10 +26,11 @@ getEsriList <- function(url) {
 }
 
 url <- URLencode("https://public.gis.lacounty.gov/public/rest/services/LACounty_Dynamic/LMS_Data_Public/MapServer/146/query?where=1%3D1&text=&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&relationParam=&outFields=city&returnGeometry=false&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&returnDistinctValues=true&resultOffset=&resultRecordCount=&f=json")
+
 cities <- getEsriList(url)
 
-# Define UI for application that draws a histogram
-ui <- fluidPage(
+# Define UI for application that creates a map
+ui <- fluidPage(theme = shinytheme("united"),
    
    # Application title
    titlePanel("LA County Police Stations"),
@@ -37,7 +39,7 @@ ui <- fluidPage(
    sidebarLayout(
       sidebarPanel(
          selectInput("city_select",
-                     "Select a Municipality:",
+                     "Select a City:",
                      choices = cities,
                      selected = "Los Angeles")
       ),
@@ -71,4 +73,3 @@ server <- function(input, output) {
 
 # Run the application 
 shinyApp(ui = ui, server = server)
-
