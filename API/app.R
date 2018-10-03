@@ -5,10 +5,11 @@ library(shiny)
 library(httr)
 library(jsonlite)
 library(plotly)
+library(htmltools)
 
 ckanSQL <- function(url) {
   # Make the Request
-  r <- RETRY("GET", encodeURL(url))
+  r <- RETRY("GET", URLencode(url))
   # Extract Content
   c <- content(r, "text")
   # Basic gsub to make NA's consistent with R
@@ -20,7 +21,7 @@ ckanSQL <- function(url) {
 # Unique values for Resource Field
 ckanUniques <- function(id, field) {
   url <- paste0("https://data.wprdc.org/api/action/datastore_search_sql?sql=SELECT%20DISTINCT(%22", field, "%22)%20from%20%22", id, "%22")
-  c(ckanSQL(urlEncode(url)))
+  c(ckanSQL(URLencode(url)))
 }
 
 types <- sort(ckanUniques("76fda9d0-69be-4dd5-8108-0de7907fc5a4", "REQUEST_TYPE")$REQUEST_TYPE)
