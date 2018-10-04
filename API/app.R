@@ -9,7 +9,7 @@ library(htmltools)
 
 ckanSQL <- function(url) {
   # Make the Request
-  r <- RETRY("GET", URLencode(url))
+  r <- GET(url)
   # Extract Content
   c <- content(r, "text")
   # Basic gsub to make NA's consistent with R
@@ -25,6 +25,14 @@ ckanUniques <- function(id, field) {
 }
 
 types <- sort(ckanUniques("76fda9d0-69be-4dd5-8108-0de7907fc5a4", "REQUEST_TYPE")$REQUEST_TYPE)
+
+dat <- ckanSQL("https://data.wprdc.org/api/action/datastore_search_sql?sql=SELECT%20*%20FROM%20%22e03a89dd-134a-4ee8-a2bd-62c40aeebc6f%22%20WHERE%22OFFENSES%22%20LIKE%20%27%Public%20Drunk%%27") 
+df <- dat %>%
+  rename(ARREST = OFFENSES) %>%
+  mutate(Race = case_when(RACE == "B" ~ "Black",
+                          RACE == "W" ~ "White",
+                          RACE == "H" ~ "Hispanic",
+                          TRUE ~ "Other"))
 
 # Define UI for application
 ui <- fluidPage(
@@ -63,9 +71,9 @@ server <- function(input, output) {
    load311 <- reactive({
      # Build API Query with proper encodes
      url <- paste0("https://data.wprdc.org/api/action/datastore_search_sql?sql=SELECT%20*%20FROM%20%2276fda9d0-69be-4dd5-8108-0de7907fc5a4%22%20WHERE%20%22CREATED_ON%22%20%3E=%20%27", input$dates[1], "%27%20AND%20%22CREATED_ON%22%20%3C=%20%27", input$dates[2], "%27%20AND%20%22REQUEST_TYPE%22%20=%20%27", input$type_select, "%27")
-     
+
      # Load and clean data
-     dat311 <- ckanSQL(url) %>%
+     dat311 <-  ckanSQL(url) %>%
        mutate(date = as.Date(CREATED_ON),
               STATUS = ifelse(STATUS == 1, "Closed", "Open"))
      
